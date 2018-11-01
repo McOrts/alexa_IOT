@@ -2,33 +2,22 @@
 
 No podía esperar para poder usar los comandos de voz de mi Alexa Echo para leer, encender y apagar dispositivos. Y hace un año monté la [estación metereológia móvil basada en el arduino MRKFOX1200](https://github.com/McOrts/MKRFOX1200_mobile-weather-station). Ahora cualquier Alexa del mundo puede informar de la temperatura, presión atmostférica y radiación untravioleta en la Playa de Palma.
 
+video
 
+## Alexa conectada al IOT
 
-Uttering Alexa voice commands to turn your ESP8266 connected device on or off is cool. There is plenty of information readily available explaining how to make that happen.
-Uttering Alexa voice commands to turn your ESP8266 connected device on or off is cool. There is plenty of information readily available explaining how to make that happen.
+El concepto es conectar un perfil (Skill) a un interface con un dispositivo IOT basado en el ESP8266 para poder interactuar con el mundo físico. Desde encender una bombilla, o leer un sensor de temperatura, hasta controlar un robot remotamente. Y tendremos que empezar por definir un _Invocation Name_ al que Alexa atienda cuando le digamos: Alexa! En mi caso:
 
-But what a custom command?
+Alexa! ask weather station
 
-Like having Alexa tell you something unique. Using data gathered by reading your specific IoT device sensors?
+## Arquitectura
 
-Such as ESP8266 measured values that change over time.
+La solución presentada aquí utiliza los servicios web de Amazon (AWS) para hacer toda la interfaz de voz con Alexa y el backend, Things Speak como repositorio para los datos de los sensores del ESP8266 y la red SigFox para subir los datos a Things Speak. De esta manera tanto el Alexa como el dispositivo IOT pueden estar situados en casi cualquier parte del mundo y mantener su interconectividad.
 
-For example, temperature or other weather sensors.
+diagrama
 
-Having the ability to interact verbally with your IoT device in this manner opens up a wide range of possibilities. Yet, as I discovered, information on this topic was more challenging to find with a google search.
+Al ver el diagrama quizás te hayas preguntado ¿Por qué no comunicarse directamente con el ESP8266 desde la función AWS Lambda? Porque implicaría saltarse varias reglas de seguridad exponiendo las credenciales del dispositivo para que AWS pudiera acceder. Amazon tiene su propia solución para esto, el AWS Greengrass, pero implica un coste y es más complejo. Things Speak actua de cortafuego y nos permite el acceso a los datos desde multiples clientes además de Alexa.
 
-So here is how I did it.
-
-And so can you.
-
-The Problem
-What is needed is a method of converting your verbal request into a command that can be sent to your ESP8266 (or other IoT device) to get the requested information, and to return the information to Alexa in a format that she can read back to you.
-
-The solution presented here uses the Amazon Web Services (AWS) to do all the voice interfacing with Alexa, Things Speak as a repository for the ESP8266 sensor data, and a VPS CRON script to move the sensor data from the ESP8266 to Things Speak.
-
-You might wonder why a VPS and Thing Speak are used. Why not communicate directly with the ESP8266 from the AWS Lambda Function?
-
-Truth is, you can cut out these intermediate steps. But for security, I have added this layer to hide my IoT credentials within my heavily fortified Virtual Private Server (VPS). But do not be concerned, as you will see, this does not make the system overly complicated.
 
 System Diagram
 
