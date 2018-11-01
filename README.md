@@ -23,15 +23,10 @@ Al ver el diagrama quizás te hayas preguntado ¿Por qué no comunicarse directa
 ## ¿Qué necesitamos?
 Los componentes utilizados para este proyecto son estos:
 * ![Amazon Alexa Echo Dot](https://github.com/McOrts/alexa_IOT/blob/master/images/echo_dot.png?raw=true) [Amazon Alexa Echo Dot](http://amzn.eu/d/8Blx0LD)
-* ![Alexa Skills Kit](https://github.com/McOrts/alexa_IOT/blob/master/images/alexa_skill.jpeg?raw=true) [Alexa Skills Kit](https://developer.amazon.com/alexa/console/ask)
+* ![Alexa Skills Kit](https://github.com/McOrts/alexa_IOT/blob/master/images/alexa_skill.jpg?raw=true) [Alexa Skills Kit](https://developer.amazon.com/alexa/console/ask)
+* ![AWS Lambda](https://github.com/McOrts/alexa_IOT/blob/master/images/aws_lambda.jpg?raw=true) [AWS Lambda](http://aws.amazon.com)
+* !ThingSpeak API](https://github.com/McOrts/alexa_IOT/blob/master/images/ThingSpeak.jpg?raw=true) [API de ThingSpeak] (https://thingspeak.com)
 	
-Amazon Alexa Alexa Skills Kit
-AWS Lambda	
-Amazon Web Services AWS Lambda
-ThingSpeak API	
-ThingSpeak API
-
-
 ## Montando el diálogo
 
 
