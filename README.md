@@ -25,25 +25,19 @@ Los componentes utilizados para este proyecto son estos:
 * ![Amazon Alexa Echo Dot](https://github.com/McOrts/alexa_IOT/blob/master/images/echo_dot.png?raw=true) [Amazon Alexa Echo Dot](http://amzn.eu/d/8Blx0LD)
 * ![Alexa Skills Kit](https://github.com/McOrts/alexa_IOT/blob/master/images/alexa_skill.jpg?raw=true) [Alexa Skills Kit](https://developer.amazon.com/alexa/console/ask)
 * ![AWS Lambda](https://github.com/McOrts/alexa_IOT/blob/master/images/aws_lambda.jpg?raw=true) [AWS Lambda](http://aws.amazon.com)
-* !ThingSpeak API](https://github.com/McOrts/alexa_IOT/blob/master/images/ThingSpeak.jpg?raw=true) [API de ThingSpeak] (https://thingspeak.com)
+* ![ThingSpeak API](https://github.com/McOrts/alexa_IOT/blob/master/images/ThingSpeak.jpg?raw=true) [API de ThingSpeak](https://thingspeak.com)
 	
 ## Montando el diálogo
+**Empezaremos con el comando vocal:**
+_“Alexa, ask weather station for measures“_
 
+**Alexa respondrá:**
+_“the temperature is 13 degrees the index of ultraviolet radiation is -1.2 and the atmospheric pressure is 1016“_
 
-Test Scenario
-We start with a voice command: “Alexa, ask ESP8266-12 for the indoor temperature”
-
-Alexa responds with: “The indoor temperature is 73.2 degrees”
-
-So what just happened?
-
-Since we are dealing with the Amazon Echo device, Amazon lingo is needed (bold).
-
-The voice command was received by the Amazon Echo device and recognized as an Alexa skill.
-
-Invocation of the skill triggered the Lambda function which, in-turn, sent a request to ThingSpeak for the current ESP8266 sensor readings,
-
-The readings returned were passed back to the Alexa skill which recites the values of the temperature sensors.
+El _Interaction Model_ incluye la configuración necesaria para que el frontal de Alexa  
+	1. On the left hand navigation panel, select the **JSON Editor** tab under **Interaction Model**. In the textfield provided, replace any existing code with the code provided in the [Interaction Model](../models/en-US.json).  Click **Save Model**.
+    2. If you want to change the skill invocation name, select the **Invocation** tab. Enter a **Skill Invocation Name**. This is the name that your users will need to say to start your skill.  In this case, it's preconfigured to be 'space facts'.
+    3. Click "Build Model".
 
 Implementation
 We need three components to make this system function as intended.
