@@ -16,7 +16,7 @@ Alexa! ask weather station
 
 La solución presentada aquí utiliza los servicios web de Amazon (AWS) para hacer toda la interfaz de voz con Alexa y el backend, Things Speak como repositorio para los datos de los sensores del Arduino y la red SigFox para subir los datos a Things Speak. De esta manera tanto el Alexa como el dispositivo IOT pueden estar situados en casi cualquier parte del mundo y mantener su interconectividad.
 
-[Arquitectura alexa ESP8266](https://github.com/McOrts/alexa_IOT/blob/master/alexa-esp-ts_architecure.jpg?raw=true)
+![Arquitectura alexa ESP8266](https://github.com/McOrts/alexa_IOT/blob/master/alexa-esp-ts_architecure.jpg?raw=true)
 
 Al ver el diagrama quizás te hayas preguntado ¿Por qué no comunicarse directamente con el ESP8266 desde la función AWS Lambda? Porque implicaría saltarse varias reglas de seguridad exponiendo las credenciales del dispositivo para que AWS pudiera acceder. Amazon tiene su propia solución para esto, el AWS Greengrass, pero implica un coste y es más complejo. Things Speak actua de cortafuego y nos permite el acceso a los datos desde multiples clientes además de Alexa.
 
