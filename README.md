@@ -22,9 +22,8 @@ Al ver el diagrama quizás te hayas preguntado ¿Por qué no comunicarse directa
 
 ## ¿Qué necesitamos?
 Los componentes utilizados para este proyecto son estos:
-* [Amazon Alexa Echo Dot](https://github.com/McOrts/alexa_IOT/blob/master/images/echo_dot.png?raw=true) Amazon Alexa Echo Dot
-* [Alexa Skills Kit](https://www.adafruit.com/product/1603) Temperature and pressure sensors
-
+* ![Amazon Alexa Echo Dot](https://github.com/McOrts/alexa_IOT/blob/master/images/echo_dot.png?raw=true) [Amazon Alexa Echo Dot](http://amzn.eu/d/8Blx0LD)
+* ![Alexa Skills Kit](https://github.com/McOrts/alexa_IOT/blob/master/images/alexa_skill.jpeg?raw=true) [Alexa Skills Kit](https://developer.amazon.com/alexa/console/ask)
 	
 Amazon Alexa Alexa Skills Kit
 AWS Lambda	
