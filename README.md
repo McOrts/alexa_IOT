@@ -4,8 +4,10 @@ No podía esperar para poder usar los comandos de voz de mi Alexa Echo para leer
 
 https://youtu.be/WW9ZDhAB9yA
 
-  <a href="http://www.youtube.com/watch?feature=player_embedded&v=VI5Jhr64cQY
-  " target="_blank"><img src="http://img.youtube.com/vi/VI5Jhr64cQY/0.jpg"
+https://i.ytimg.com/vi/WW9ZDhAB9yA/hqdefault.jpg?sqp=-oaymwEjCPYBEIoBSFryq4qpAxUIARUAAAAAGAElAADIQj0AgKJDeAE=&rs=AOn4CLAfTOo8Ia5afyT9RIVstrLI4tKbTw
+
+  <a href="http://www.youtube.com/watch?feature=player_embedded&v=WW9ZDhAB9yA
+  " target="_blank"><img src="http://img.youtube.com/vi/WW9ZDhAB9yA/0.jpg"
   alt="Basic video" width="240" height="180" border="10" /><
 
 ## Alexa conectada al IOT
