@@ -1,0 +1,3 @@
+Alexa ask weather station for measures
+Alexa ask weather station for information
+Alexa ask weather station data
