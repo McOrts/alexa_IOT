@@ -2,7 +2,11 @@
 
 No podía esperar para poder usar los comandos de voz de mi Alexa Echo para leer, encender y apagar dispositivos. Y hace un año monté la [estación metereológia móvil basada en el arduino MRKFOX1200](https://github.com/McOrts/MKRFOX1200_mobile-weather-station). Ahora cualquier Alexa del mundo puede informar de la temperatura, presión atmostférica y radiación untravioleta en la Playa de Palma.
 
-video
+https://youtu.be/WW9ZDhAB9yA
+
+  <a href="http://www.youtube.com/watch?feature=player_embedded&v=VI5Jhr64cQY
+  " target="_blank"><img src="http://img.youtube.com/vi/VI5Jhr64cQY/0.jpg"
+  alt="Basic video" width="240" height="180" border="10" /><
 
 ## Alexa conectada al IOT
 
