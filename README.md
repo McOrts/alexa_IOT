@@ -31,7 +31,7 @@ Los componentes utilizados para este proyecto son estos:
 Este proyecto tiene dos partes: la de Amazon y la de Arduino+ThingSpeak. Esta última está explicada en el proyecto [estación metereológia móvil basada en el arduino MRKFOX1200](https://github.com/McOrts/MKRFOX1200_mobile-weather-station) del que parte esta idea. Para la parte de Amazon recomiento este [repositorio oficial de Alexa](https://github.com/alexa/skill-sample-python-fact/tree/master/instructions) muy util tanto para novatos como para iniciados. Contiene una documentación que te guiará paso por paso en la producción de un skill basado en código Python y que se resume en estos apartados:
 ![AWS_skill_workflow](https://https://github.com/McOrts/alexa_IOT/blob/master/images/AWS_skill_workflow.PNG?raw=true)
 
-### Montando el diálogo (Voice User Interface)
+### 1 Montando el diálogo (Voice User Interface)
 Hay que diseñar el dialogo más en la parte de la respuesta, que estará toda descrita en el programa Python que en las preguntas. Amazon ha desarrollado una configuración de metadatos que simplifica tremendamente esta tarea. No tenemos que saber nada de reconocimiento de lenguaje natural. Solo hay definir dos elementos: el **Invocation name** que es la clave de llamada a nuestro skill y los **Intents** que son ejemplos de complementos directos de la sintáxis de la frase. No es necesario poner todas las posbilidades. La IA de Alexa sabrá interpretar las variantes de las preguntas del usuario.
 
 En mi caso, pretendía algo simple como esto:
@@ -86,68 +86,215 @@ Todo esto se configura en el _Interaction Model_ que construye un modelo que el 
 }
 ```
 
-Por otra parte, este frontal necesista y saber a dónde tiene que llamar. Esto se informa en el apartado *Endpoint* donde hay 
+Por otra parte, este frontal necesista y saber a dónde tiene que llamar. Esto se informa en el apartado *Endpoint* donde hay decir si se llamará una aplicación _serverless_ de AWS (Lambda) o a un servicio web externo. En mi caso es un Lambda y aquí tendremos que poner si identificador que viene informado en AWS como ARN.
+
+### 2 Montando el backend (Lambda Function)
+En primer lugar necesitaremos una cuenta de usuario diferente. No puede ser la misma que hemos utilizado para el skill. 
+Aquí tenemos que implementar la lógica de la llamada a ThingSpeak para recuperar los datos de la estación y elaborar las respuestas que Alexa va a reproducir.
+
+Yo me he basado en el ejemplo del [repositorio oficial de Alexa](https://github.com/alexa/skill-sample-python-fact/tree/master/instructions) añadiendo la libreria _urllib_ para poder hacer la llamada a la API de ThingSpeak. Es importante saber que hay que compilar las dependencias en un servidor que tenga el [ASK SDK for Python](https://github.com/alexa/alexa-skills-kit-sdk-for-python). Yo he utilizado una instancia S3 básica para hacer esta compilación y generar todos los archivos que Lambda va a necesitar y utilizando el servicio SCP para descargarme el .zip. Está todo muy bien explicado en el punto 7 del documento: https://github.com/alexa/skill-sample-python-fact/blob/master/instructions/2-lambda-function.md
+
+Y aquí está el código Python:
+
+```
+# -*- coding: utf-8 -*-
+"""Simple fact sample app."""
+
+import random
+import logging
+import urllib
+
+from ask_sdk_core.skill_builder import SkillBuilder
+from ask_sdk_core.dispatch_components import (
+    AbstractRequestHandler, AbstractExceptionHandler,
+    AbstractRequestInterceptor, AbstractResponseInterceptor)
+from ask_sdk_core.utils import is_request_type, is_intent_name
+from ask_sdk_core.handler_input import HandlerInput
+
+from ask_sdk_model.ui import SimpleCard
+from ask_sdk_model import Response
 
 
-	1. On the left hand navigation panel, select the **JSON Editor** tab under **Interaction Model**. In the textfield provided, replace any existing code with the code provided in the [Interaction Model](../models/en-US.json).  Click **Save Model**.
-    2. If you want to change the skill invocation name, select the **Invocation** tab. Enter a **Skill Invocation Name**. This is the name that your users will need to say to start your skill.  In this case, it's preconfigured to be 'space facts'.
-    3. Click "Build Model".
+# =========================================================================================================================================
+# TODO: The items below this comment need your attention.
+# =========================================================================================================================================
+# Change these elements to point to your data
 
-Implementation
-We need three components to make this system function as intended.
+# Thingspeak configuration
+channel = 365024
+link_pressure = "https://api.thingspeak.com/channels/" + str(channel) + "/fields/3/last"
+link_temperature = "https://api.thingspeak.com/channels/" + str(channel) + "/fields/2/last"
+link_uv = "https://api.thingspeak.com/channels/" + str(channel) + "/fields/4/last"
 
-Data Source (ESP8266 Sensor Data)
+# Alexa params
+SKILL_NAME = "Weather Station"
+HELP_MESSAGE = "You can say tell me weather information, or, you can say exit... What can I help you with?"
+HELP_REPROMPT = "What can I help you with?"
+STOP_MESSAGE = "Goodbye!"
+FALLBACK_MESSAGE = "The weather station can't help you with that.  It can help you know weather information in Playa De Palma if you say ask weather station data. What can I help you with?"
+FALLBACK_REPROMPT = 'What can I help you with?'
+EXCEPTION_MESSAGE = "Sorry. I cannot help you with that."
 
-From ThingSpeak Channel or
-Directly from ESP8266
-Amazon Skill to convert your voice to a command to retrieve the requested information
+# =========================================================================================================================================
+# Editing anything below this line might break your skill.
+# =========================================================================================================================================
 
-Amazon Lambda function to receive the Skill request, query for the requested information and return a reply to the Amazon Skill
+sb = SkillBuilder()
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
-Let’s do it…
 
-You will need to setup two accounts with Amazon, If you do not already have these accounts, create them now. No worries, they are FREE:
+# Built-in Intent Handlers
+class GetNewFactHandler(AbstractRequestHandler):
+    """Handler for Skill Launch and GetNewFact Intent."""
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return (is_request_type("LaunchRequest")(handler_input) or
+                is_intent_name("GetEspInfoIntent")(handler_input))
 
-Create Amazon Developer Account (For Alexa Skill)
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In GetNewFactHandler")
 
-Start by pointing your browser to:
+        f = urllib.urlopen(link_temperature) # Get data 
+        weather_temperature = str(f.read())
+        weather_data = weather_temperature
+        speech = "the temperature is " + weather_temperature + " degrees"
 
-https://developer.amazon.com/
+        f = urllib.urlopen(link_uv) # Get data 
+        weather_uv = str(round(float(f.read()),1))
+        weather_data = weather_data + ";" + weather_uv
+        speech = speech + " the index of ultraviolet radiation is " + weather_uv
 
-Select “Sign In” located on the page’s top-right header:
+        f = urllib.urlopen(link_pressure) # Get data 
+        weather_pressure = str(f.read())
+        weather_data = weather_data + ";" + weather_pressure
+        speech = speech + " and the atmospheric pressure is " + weather_pressure
 
-Next, select the “Create your Amazon Developer Account” button
 
-Follow the instructions to create your free Amazon Developer Account
+        handler_input.response_builder.speak(speech).set_card(
+            SimpleCard(SKILL_NAME, weather_data))
+        return handler_input.response_builder.response
 
-Create free AWS account (For Lambda Function)
 
-Start by pointing your browser to:
+class HelpIntentHandler(AbstractRequestHandler):
+    """Handler for Help Intent."""
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("AMAZON.HelpIntent")(handler_input)
 
-https://portal.aws.amazon.com/billing/signup#/start
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In HelpIntentHandler")
 
-Follow the instructions to create your free AWS (Amazon Web Services) Account
+        handler_input.response_builder.speak(HELP_MESSAGE).ask(
+            HELP_REPROMPT).set_card(SimpleCard(
+                SKILL_NAME, HELP_MESSAGE))
+        return handler_input.response_builder.response
 
-Creating the Alexa Skill
 
-Sign in to https://developer.amazon.com/ and go to the Developer Console.
+class CancelOrStopIntentHandler(AbstractRequestHandler):
+    """Single handler for Cancel and Stop Intent."""
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return (is_intent_name("AMAZON.CancelIntent")(handler_input) or
+                is_intent_name("AMAZON.StopIntent")(handler_input))
 
-Select the Alexa tab.
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In CancelOrStopIntentHandler")
 
-Select “Get Started” Alexa Skills Kit.
+        handler_input.response_builder.speak(STOP_MESSAGE)
+        return handler_input.response_builder.response
 
-Select “Add a New Skill”
 
-Note: The rest of the skill creation can be customized for your needs. It is suggested that you follow along with this guide for your first skill, and customize after getting this example to work. For this example, my publicly shared ThingSpeak Channel is used for the dynamic data source
+class FallbackIntentHandler(AbstractRequestHandler):
+    """Handler for Fallback Intent.
+    AMAZON.FallbackIntent is only available in en-US locale.
+    This handler will not be triggered except in that locale,
+    so it is safe to deploy on any locale.
+    """
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("AMAZON.FallbackIntent")(handler_input)
 
-For the first tab (Skill information), enter:
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In FallbackIntentHandler")
 
-Name: ESP8266
+        handler_input.response_builder.speak(FALLBACK_MESSAGE).ask(
+            FALLBACK_REPROMPT)
+        return handler_input.response_builder.response
 
-Invocation Name: e s p eighty two sixty six dash twelve
 
-Then click “Save” at the bottom.
+class SessionEndedRequestHandler(AbstractRequestHandler):
+    """Handler for Session End."""
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_request_type("SessionEndedRequest")(handler_input)
 
-For the Interaction Model tab, enter:
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In SessionEndedRequestHandler")
 
-Intent Schema (copy/paste):
+        logger.info("Session ended reason: {}".format(
+            handler_input.request_envelope.request.reason))
+        return handler_input.response_builder.response
+
+
+# Exception Handler
+class CatchAllExceptionHandler(AbstractExceptionHandler):
+    """Catch all exception handler, log exception and
+    respond with custom message.
+    """
+    def can_handle(self, handler_input, exception):
+        # type: (HandlerInput, Exception) -> bool
+        return True
+
+    def handle(self, handler_input, exception):
+        # type: (HandlerInput, Exception) -> Response
+        logger.info("In CatchAllExceptionHandler")
+        logger.error(exception, exc_info=True)
+
+        handler_input.response_builder.speak(EXCEPTION_MESSAGE).ask(
+            HELP_REPROMPT)
+
+        return handler_input.response_builder.response
+
+
+# Request and Response loggers
+class RequestLogger(AbstractRequestInterceptor):
+    """Log the alexa requests."""
+    def process(self, handler_input):
+        # type: (HandlerInput) -> None
+        logger.debug("Alexa Request: {}".format(
+            handler_input.request_envelope.request))
+
+
+class ResponseLogger(AbstractResponseInterceptor):
+    """Log the alexa responses."""
+    def process(self, handler_input, response):
+        # type: (HandlerInput, Response) -> None
+        logger.debug("Alexa Response: {}".format(response))
+
+
+# Register intent handlers
+sb.add_request_handler(GetNewFactHandler())
+sb.add_request_handler(HelpIntentHandler())
+sb.add_request_handler(CancelOrStopIntentHandler())
+sb.add_request_handler(FallbackIntentHandler())
+sb.add_request_handler(SessionEndedRequestHandler())
+
+# Register exception handlers
+sb.add_exception_handler(CatchAllExceptionHandler())
+
+# TODO: Uncomment the following lines of code for request, response logs.
+# sb.add_global_request_interceptor(RequestLogger())
+# sb.add_global_response_interceptor(ResponseLogger())
+
+# Handler name that is used on AWS lambda
+lambda_handler = sb.lambda_handler()
+```
+### 3. Conectar AWS con ALEXA (Connect VUI to Code)
+Como he comentado antes existe un código idntificador llamado ARN que debemos relacionar.
+
