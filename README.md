@@ -10,7 +10,7 @@ No podía esperar para poder usar los comandos de voz de mi Alexa Echo para leer
 
 El concepto es conectar un perfil (Skill) a un interface con un dispositivo IOT basado en Arduino para poder interactuar con el mundo físico. Desde encender una bombilla, o leer un sensor de temperatura, hasta controlar un robot remotamente. Y tendremos que empezar por definir un _Invocation Name_ al que Alexa atienda cuando le digamos: Alexa! En mi caso:
 
-Alexa! ask weather station
+_**Alexa! ask weather station**_
 
 ## Arquitectura
 
@@ -22,23 +22,73 @@ Al ver el diagrama quizás te hayas preguntado ¿Por qué no comunicarse directa
 
 ## ¿Qué necesitamos?
 Los componentes utilizados para este proyecto son estos:
-1. ![Amazon Alexa Echo Dot](https://github.com/McOrts/alexa_IOT/blob/master/images/echo_dot.png?raw=true) [Amazon Alexa Echo Dot](http://amzn.eu/d/8Blx0LD)
-2. ![Alexa Skills Kit](https://github.com/McOrts/alexa_IOT/blob/master/images/alexa_skill.jpg?raw=true) [Alexa Skills Kit](https://developer.amazon.com/alexa/console/ask)
-3. ![AWS Lambda](https://github.com/McOrts/alexa_IOT/blob/master/images/aws_lambda.jpg?raw=true) [AWS Lambda](http://aws.amazon.com)
-4. ![ThingSpeak API](https://github.com/McOrts/alexa_IOT/blob/master/images/ThingSpeak.jpg?raw=true) [API de ThingSpeak](https://thingspeak.com)
+* ![Amazon Alexa Echo Dot](https://github.com/McOrts/alexa_IOT/blob/master/images/echo_dot.png?raw=true) [Amazon Alexa Echo Dot](http://amzn.eu/d/8Blx0LD)
+* ![Alexa Skills Kit](https://github.com/McOrts/alexa_IOT/blob/master/images/alexa_skill.jpg?raw=true) [Alexa Skills Kit](https://developer.amazon.com/alexa/console/ask)
+* ![AWS Lambda](https://github.com/McOrts/alexa_IOT/blob/master/images/aws_lambda.jpg?raw=true) [AWS Lambda](http://aws.amazon.com)
+* ![ThingSpeak API](https://github.com/McOrts/alexa_IOT/blob/master/images/ThingSpeak.jpg?raw=true) [API de ThingSpeak](https://thingspeak.com)
 
 ## Implementación
 Este proyecto tiene dos partes: la de Amazon y la de Arduino+ThingSpeak. Esta última está explicada en el proyecto [estación metereológia móvil basada en el arduino MRKFOX1200](https://github.com/McOrts/MKRFOX1200_mobile-weather-station) del que parte esta idea. Para la parte de Amazon recomiento este [repositorio oficial de Alexa](https://github.com/alexa/skill-sample-python-fact/tree/master/instructions) muy util tanto para novatos como para iniciados. Contiene una documentación que te guiará paso por paso en la producción de un skill basado en código Python y que se resume en estos apartados:
 ![AWS_skill_workflow](https://https://github.com/McOrts/alexa_IOT/blob/master/images/AWS_skill_workflow.PNG?raw=true)
 
 ### Montando el diálogo (Voice User Interface)
-**Empezaremos con el comando vocal:**
+Hay que diseñar el dialogo más en la parte de la respuesta, que estará toda descrita en el programa Python que en las preguntas. Amazon ha desarrollado una configuración de metadatos que simplifica tremendamente esta tarea. No tenemos que saber nada de reconocimiento de lenguaje natural. Solo hay definir dos elementos: el **Invocation name** que es la clave de llamada a nuestro skill y los **Intents** que son ejemplos de complementos directos de la sintáxis de la frase. No es necesario poner todas las posbilidades. La IA de Alexa sabrá interpretar las variantes de las preguntas del usuario.
+
+En mi caso, pretendía algo simple como esto:
+
+**Comando vocal del uisuario:**
 _“Alexa, ask weather station for measures“_
 
-**Alexa respondrá:**
-_“the temperature is 13 degrees the index of ultraviolet radiation is -1.2 and the atmospheric pressure is 1016“_
+**Respuesta de Alexa:**
+_“The temperature is 13 degrees the index of ultraviolet radiation is -1.2 and the atmospheric pressure is 1016“_
 
-El _Interaction Model_ incluye la configuración necesaria para que el frontal de Alexa  
+Todo esto se configura en el _Interaction Model_ que construye un modelo que el frontal de Alexa ejecuta para interactuar con el usuario. A efectos prácticos esto queda resumido en una estructura JSON que mi proyectos es esta:
+
+```
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "weather station",
+            "intents": [
+                {
+                    "name": "AMAZON.FallbackIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "GetEspInfoIntent",
+                    "slots": [],
+                    "samples": [
+                        "for measures",
+                        "data",
+                        "for information"
+                    ]
+                }
+            ],
+            "types": []
+        }
+    }
+}
+```
+
+Por otra parte, este frontal necesista y saber a dónde tiene que llamar. Esto se informa en el apartado *Endpoint* donde hay 
+
+
 	1. On the left hand navigation panel, select the **JSON Editor** tab under **Interaction Model**. In the textfield provided, replace any existing code with the code provided in the [Interaction Model](../models/en-US.json).  Click **Save Model**.
     2. If you want to change the skill invocation name, select the **Invocation** tab. Enter a **Skill Invocation Name**. This is the name that your users will need to say to start your skill.  In this case, it's preconfigured to be 'space facts'.
     3. Click "Build Model".
