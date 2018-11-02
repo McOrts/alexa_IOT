@@ -8,7 +8,7 @@ No podía esperar para poder usar los comandos de voz de mi Alexa Echo para leer
 
 ## Alexa conectada al IOT
 
-El concepto es conectar un perfil (Skill) a un interface con un dispositivo IOT basado en Arduino para poder interactuar con el mundo físico. Desde encender una bombilla, o leer un sensor de temperatura, hasta controlar un robot remotamente. Y tendremos que empezar por definir un _Invocation Name_ al que Alexa atienda cuando le digamos: Alexa! En mi caso:
+El concepto es conectar un perfil (Skill) a un interface con un dispositivo IOT basado en Arduino para poder interactuar con el mundo físico. Desde encender una bombilla, o leer un sensor de temperatura, hasta controlar un robot remotamente. Todo empieza definiendo un _Invocation Name_ al que Alexa atenderá cuando le digamos: Alexa! En mi caso es:
 
 _**Alexa! ask weather station**_
 
