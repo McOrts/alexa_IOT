@@ -311,7 +311,7 @@ Y por otra parte la consola de desarrollo de Alexa nos deja simular el comando d
 Esto es otra aventura que explicaré más adelante y que ya he empezado:
 ![Test de skill](https://github.com/McOrts/alexa_IOT/blob/master/images/mallorca_beach_weather_skill_entry.PNG?raw=true)
 
-# Conlusiones
+# Conclusiones
 Hacer este tipo de desarrollos no es trivial. Además el uso de recursos de AWS tiene un coste que puede llevar a morir de éxito a tu skill si no le has hecho un buen plan de monetización. Amazon tiene presente este problema y ofrece [créditos promocionales a desarrolladores](https://developer.amazon.com/es/alexa-skills-kit/alexa-aws-credits) que desplieguen en esta tecnología y que la cuenta gratuita (AWS Free Tier) no sea suficiente con el millón de peticiones al mes que incluye sin coste.
 
 
