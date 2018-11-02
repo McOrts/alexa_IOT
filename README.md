@@ -18,7 +18,7 @@ La solución presentada aquí utiliza los servicios web de Amazon (AWS) para hac
 
 ![Arquitectura alexa ESP8266](https://github.com/McOrts/alexa_IOT/blob/master/images/alexa-esp-ts_architecure.jpg?raw=true)
 
-Al ver el diagrama quizás te hayas preguntado ¿Por qué no comunicarse directamente con el ESP8266 desde la función AWS Lambda? Porque implicaría saltarse varias reglas de seguridad exponiendo las credenciales del dispositivo para que AWS pudiera acceder. Amazon tiene su propia solución para esto, el AWS Greengrass, pero implica un coste y es más complejo. Things Speak actua de cortafuego y nos permite el acceso a los datos desde multiples clientes además de Alexa.
+Al ver el diagrama quizás te hayas preguntado ¿Por qué no comunicarse directamente con el ESP8266 desde la función AWS Lambda? Porque implicaría saltarse varias reglas de seguridad exponiendo las credenciales del dispositivo para que AWS pudiera acceder. Amazon tiene su propia solución para esto, el AWS Greengrass, pero implica un coste y es más complejo. Things Speak actua de cortafuego y nos permite el acceso a los datos desde múltiples clientes además de Alexa.
 
 ## ¿Qué necesitamos?
 Los componentes utilizados para este proyecto son estos:
@@ -28,16 +28,16 @@ Los componentes utilizados para este proyecto son estos:
 * ![ThingSpeak API](https://github.com/McOrts/alexa_IOT/blob/master/images/ThingSpeak.jpg?raw=true) [API de ThingSpeak](https://thingspeak.com)
 
 ## Implementación
-Este proyecto tiene dos partes: la de Amazon y la de Arduino+ThingSpeak. Esta última está explicada en el proyecto [estación metereológia móvil basada en el arduino MRKFOX1200](https://github.com/McOrts/MKRFOX1200_mobile-weather-station) del que parte esta idea. Para la parte de Amazon recomiento este [repositorio oficial de Alexa](https://github.com/alexa/skill-sample-python-fact/tree/master/instructions) muy util tanto para novatos como para iniciados. Contiene una documentación que te guiará paso por paso en la producción de un skill basado en código Python y que se resume en estos apartados:
+Este proyecto tiene dos partes: la de Amazon y la de Arduino+ThingSpeak. Esta última está explicada en el proyecto [estación metereológia móvil basada en el arduino MRKFOX1200](https://github.com/McOrts/MKRFOX1200_mobile-weather-station) del que parte esta idea. Para la parte de Amazon recomiento este [repositorio oficial de Alexa](https://github.com/alexa/skill-sample-python-fact/tree/master/instructions) muy útil tanto para novatos como para iniciados. Contiene una documentación que te guiará paso por paso en la producción de un skill basado en código Python y que se resume en estos apartados:
 
 ![AWS_skill_workflow](https://github.com/McOrts/alexa_IOT/blob/master/images/AWS_skill_workflow.PNG?raw=true)
 
 ### 1 Montando el diálogo (Voice User Interface)
-Hay que diseñar el dialogo más en la parte de la respuesta, que estará toda descrita en el programa Python que en las preguntas. Amazon ha desarrollado una configuración de metadatos que simplifica tremendamente esta tarea. No tenemos que saber nada de reconocimiento de lenguaje natural. Solo hay definir dos elementos: el **Invocation name** que es la clave de llamada a nuestro skill y los **Intents** que son ejemplos de complementos directos de la sintáxis de la frase. No es necesario poner todas las posbilidades. La IA de Alexa sabrá interpretar las variantes de las preguntas del usuario.
+Hay que diseñar el dialogo más en la parte de la respuesta, que estará toda descrita en el programa Python que en las preguntas. Amazon ha desarrollado una configuración de metadatos que simplifica extremadamente esta tarea. No tenemos que saber nada de reconocimiento de lenguaje natural. Solo hay definir dos elementos: el **Invocation name** que es la clave de llamada a nuestro skill y los **Intents** que son ejemplos de complementos directos de la sintaxis de la frase. No es necesario poner todas las posibilidades. La IA de Alexa sabrá interpretar las variantes de las preguntas del usuario.
 
 En mi caso, pretendía algo simple como esto:
 
-**Comando vocal del uisuario:**
+**Comando vocal del usuario:**
 _“Alexa, ask weather station for measures“_
 
 **Respuesta de Alexa:**
@@ -87,7 +87,7 @@ Todo esto se configura en el _Interaction Model_ que construye un modelo que el 
 }
 ```
 
-Por otra parte, este frontal necesista y saber a dónde tiene que llamar. Esto se informa en el apartado *Endpoint* donde hay decir si se llamará una aplicación _serverless_ de AWS (Lambda) o a un servicio web externo. En mi caso es un Lambda y aquí tendremos que poner si identificador que viene informado en AWS como ARN.
+Por otra parte, este frontal necesita y saber a dónde tiene que llamar. Esto se informa en el apartado *Endpoint* donde hay decir si se llamará una aplicación _serverless_ de AWS (Lambda) o a un servicio web externo. En mi caso es un Lambda y aquí tendremos que poner si identificador que viene informado en AWS como ARN.
 
 ### 2 Montando el backend (Lambda Function)
 En primer lugar necesitaremos una cuenta de usuario diferente. No puede ser la misma que hemos utilizado para el skill. 
@@ -300,7 +300,7 @@ lambda_handler = sb.lambda_handler()
 Como he comentado antes existe un código identificador llamado ARN que debemos relacionar copiandolo de la parte superior consola de AWS al apartado Endpoint del consola de Skills de ALEXA.
 
 ### 4. testing
-Se pueden hacer pruebas desde los dos entornos. El de AWS nos probará la función Lamabda en el modo _Fact_ que cuando se produce ninguna excepción y que además podemos debugar usando los logs de CloudWatch.
+Se pueden hacer pruebas desde los dos entornos. El de AWS nos probará la función Lambda en el modo _Fact_ que cuando se produce ninguna excepción y que además podemos debugar usando los logs de CloudWatch.
 ![Test de Lambda](https://github.com/McOrts/alexa_IOT/blob/master/images/test_lambda.PNG?raw=true)
 
 Y por otra parte la consola de desarrollo de Alexa nos deja simular el comando de voz completo, incluso usando el micrófono de nuestro ordenador:
@@ -312,6 +312,6 @@ Esto es otra aventura que explicaré más adelante y que ya he empezado:
 ![Test de skill](https://github.com/McOrts/alexa_IOT/blob/master/images/mallorca_beach_weather_skill_entry.PNG?raw=true)
 
 # Conlusiones
-Hacer este tipo de desarrollos no es trivial. Además el uso de recursos de AWS tiene un coste que puede llevar a morir de éxito a tu skill si no le has hecho un buen plan de monetización. Amazon tiene presente este problema y ofrece [creditos promocionales a desarrolladores](https://developer.amazon.com/es/alexa-skills-kit/alexa-aws-credits) que desplieguen en esta tecnología y que la cuenta gratuita (AWS Free Tier) no sea suficente con el millón de peticiones al mes que incluye sin coste.
+Hacer este tipo de desarrollos no es trivial. Además el uso de recursos de AWS tiene un coste que puede llevar a morir de éxito a tu skill si no le has hecho un buen plan de monetización. Amazon tiene presente este problema y ofrece [créditos promocionales a desarrolladores](https://developer.amazon.com/es/alexa-skills-kit/alexa-aws-credits) que desplieguen en esta tecnología y que la cuenta gratuita (AWS Free Tier) no sea suficiente con el millón de peticiones al mes que incluye sin coste.
 
 
