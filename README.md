@@ -296,5 +296,17 @@ sb.add_exception_handler(CatchAllExceptionHandler())
 lambda_handler = sb.lambda_handler()
 ```
 ### 3. Conectar AWS con ALEXA (Connect VUI to Code)
-Como he comentado antes existe un código idntificador llamado ARN que debemos relacionar.
+Como he comentado antes existe un código identificador llamado ARN que debemos relacionar copiandolo de la parte superior consola de AWS al apartado Endpoint del consola de Skills de ALEXA.
+
+### 4. testing
+Se pueden hacer pruebas desde los dos entornos. El de AWS nos probará la función Lamabda en el modo _Fact_ que cuando se produce ninguna excepción y que además podemos debugar usando los logs de CloudWatch.
+![Test de Lambda](https://github.com/McOrts/alexa_IOT/blob/master/images/test_lambda.PNG?raw=true)
+
+Y por otra parte la consola de desarrollo de Alexa nos deja simular el comando de voz completo, incluso usando el micrófono de nuestro ordenador:
+
+![Test de skill](https://github.com/McOrts/alexa_IOT/blob/master/images/test_skill.PNG?raw=true)
+
+# Conlusiones
+Hacer este tipo de desarrollos no es trivial. Además el uso de recursos de AWS tiene un coste que puede llevar a morir de éxito a tu skill si no le has hecho un buen plan de monetización. Amazon tiene presente este problema y ofrece [creditos promocionales a desarrolladores](https://developer.amazon.com/es/alexa-skills-kit/alexa-aws-credits) que desplieguen en esta tecnología y que la cuenta gratuita (AWS Free Tier) no sea suficente con el millón de peticiones al mes que incluye sin coste.
+
 
