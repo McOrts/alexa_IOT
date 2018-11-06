@@ -1,7 +1,7 @@
 ![Alexa IOT](https://github.com/McOrts/alexa_IOT/blob/master/images/mallorca_beach_weather_skill_poster.PNG?raw=true)
 # Alexa te informa de la temperatura y el sol de la Playa de Palma 
 
-No podía esperar para poder usar los comandos de voz de mi Alexa Echo para leer, encender y apagar dispositivos. Y hace un año monté la [estación metereológia móvil basada en el arduino MRKFOX1200](https://github.com/McOrts/MKRFOX1200_mobile-weather-station). Ahora cualquier Alexa del mundo puede informar de la temperatura, presión aatmosférica y radiación ultravioleta en la Playa de Palma.
+No podía esperar para poder usar los comandos de voz de mi Alexa Echo para leer, encender y apagar dispositivos. Hace un año monté la [estación metereológica móvil basada en el arduino MRKFOX1200](https://github.com/McOrts/MKRFOX1200_mobile-weather-station) y le faltaba poder hablar. Ahora cualquier Alexa del mundo puede informar de la temperatura, presión atmosférica y radiación ultravioleta de la Playa de Palma.
 
   <a href="http://www.youtube.com/watch?feature=player_embedded&v=WW9ZDhAB9yA
   " target="_blank"><img src="http://img.youtube.com/vi/WW9ZDhAB9yA/0.jpg"
